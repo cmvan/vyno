@@ -1,11 +1,4 @@
-import {
-  Dimensions,
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Pressable,
-} from "react-native";
+import { Dimensions, StyleSheet, View, Text, Pressable } from "react-native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Themes } from "../assets/Themes";
@@ -13,24 +6,19 @@ import { millisToMinutesAndSeconds } from "../utils";
 
 const windowWidth = Dimensions.get("window").width;
 
-const Song = ({
-  songTitle,
-  songArtists,
-  albumName,
-  duration,
-  imageUrl,
-  externalUrl,
-  previewUrl,
-}) => {
+const Song = ({ songTitle, songArtists, albumName, duration, imageUrl, previewUrl }) => {
   const formattedDuration = millisToMinutesAndSeconds(duration);
   const artistList = JSON.parse(songArtists).map((artist) => artist.name);
   const artists = artistList.join(", ");
   return (
     <Link
       href={{
-        pathname: "/external",
+        pathname: "/album",
         params: {
-          externalUrl: externalUrl,
+          albumName: albumName,
+          albumArtists: artists,
+          duration: duration,
+          imageUrl: imageUrl,
         },
       }}
       asChild
@@ -54,32 +42,14 @@ const Song = ({
             />
           </Pressable>
         </Link>
-        <View style={styles.albumImageContainer}>
-          <Image source={{ uri: imageUrl }} style={styles.albumImage} />
-        </View>
         <View style={styles.songTitleArtist}>
-          <Text
-            style={[styles.text, styles.whiteText]}
-            ellipsizeMode={"tail"}
-            numberOfLines={1}
-          >
+          <Text style={[styles.text, styles.whiteText]} ellipsizeMode={"tail"} numberOfLines={1}>
             {songTitle}
           </Text>
-          <Text
-            style={[styles.text, styles.grayText]}
-            ellipsizeMode={"tail"}
-            numberOfLines={1}
-          >
+          <Text style={[styles.text, styles.grayText]} ellipsizeMode={"tail"} numberOfLines={1}>
             {artists}
           </Text>
         </View>
-        <Text
-          style={[styles.text, styles.whiteText, styles.albumName]}
-          ellipsizeMode={"tail"}
-          numberOfLines={1}
-        >
-          {albumName}
-        </Text>
         <Text style={[styles.text, styles.whiteText]}>{formattedDuration}</Text>
       </Pressable>
     </Link>
@@ -105,20 +75,9 @@ const styles = StyleSheet.create({
   grayText: {
     color: Themes.colors.gray,
   },
-  albumImageContainer: {
-    marginRight: 10,
-  },
-  albumImage: {
-    height: windowWidth * 0.15,
-    width: windowWidth * 0.15,
-  },
   songTitleArtist: {
-    flexBasis: windowWidth * 0.25,
+    flexBasis: windowWidth * 0.5,
     flexDirection: "column",
-    marginRight: 10,
-  },
-  albumName: {
-    flexBasis: windowWidth * 0.25,
     marginRight: 10,
   },
 });

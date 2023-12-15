@@ -1,13 +1,19 @@
 import { Dimensions, Image, View, StyleSheet, Text } from "react-native";
-import { Images, Themes } from "../assets/Themes";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Themes } from "../assets/Themes";
 
 const windowWidth = Dimensions.get("window").width;
 
 const SongListHeader = () => {
   return (
     <View style={styles.headerContainer}>
-      <Image source={Images.spotify} style={styles.spotifyLogo} />
-      <Text style={styles.headerText}>My Top Tracks</Text>
+      <FontAwesome5
+        name="record-vinyl"
+        size={18}
+        color="white"
+        style={styles.vynoLogo}
+      />
+      <Text style={styles.headerText}>TrackList</Text>
     </View>
   );
 };
@@ -20,14 +26,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   headerText: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 18,
     color: Themes.colors.white,
   },
-  spotifyLogo: {
-    height: windowWidth * 0.07,
-    width: windowWidth * 0.07,
-    marginRight: 8,
+  vynoLogo: {
+    marginRight: 5,
   },
 });
 

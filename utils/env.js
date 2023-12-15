@@ -1,10 +1,13 @@
 import { Platform } from "react-native";
 
-// ***** TODO: Fill in your constants here ***** //
+// Spotify envs
 const CLIENT_ID = "e637ee27b78b4e3cb142e71f0cf86a6d";
-const REDIRECT_URI = "exp://10.29.37.198:19000"; // TODO: Replace this with your own redirect URI
-const ALBUM_ID = "37i9dQZF1DX4NMZ4UC3NCh?si=69c38805adab413c"; // Set to Red Velvet's This is Red Velvet playlist"
-// ********************************************* //
+const REDIRECT_URI = "exp://10.29.37.198:19000";
+const ALBUM_ID = "4UUICitfodUVCNhzmDFbrO?si=BVrWbEMFQM-e8Uv1hALjgw"; // Set to Red Velvet's Chill Kill album"
+
+// Discogs envs
+const DISCOGS_TOKEN = "KjyhwyNrIFCCAbAizZQFPDmCDyZWXFlEuMJvUiPe";
+const COLLECTION_URI = "https://api.discogs.com/users/cmvan/collection/folders/6624952/releases";
 
 const redirectUri = (uri) => {
   if (!uri) {
@@ -37,12 +40,14 @@ const ENV = {
       authorizationEndpoint: "https://accounts.spotify.com/authorize",
       tokenEndpoint: "https://accounts.spotify.com/api/token",
     },
-    // ***** TODO: Fill this in ***** //
-    TOP_TRACKS_API:
-      "https://api.spotify.com/v1/me/top/tracks?limit=20&offset=0",
-    // ***** TODO: Or fill this in ***** //
-    ALBUM_TRACK_API_GETTER: (albumId) => "https://api.spotify.com/v1/TODO",
+    TOP_TRACKS_API: "https://api.spotify.com/v1/me/top/tracks?limit=20&offset=0",
+    SEARCH_ALBUM_API_GETTER: (query) =>
+      "https://api.spotify.com/v1/search?q=" + encodeURIComponent(query) + "&type=album",
+    ALBUM_API_GETTER: (albumId) => "https://api.spotify.com/v1/albums/" + albumId + "/tracks",
+    TRACKS_API_GETTER: (trackIds) => "https://api.spotify.com/v1/tracks?ids=" + trackIds.join(","),
   },
+  DISCOGS_TOKEN: DISCOGS_TOKEN,
+  COLLECTION_URI: COLLECTION_URI,
 };
 
 const getEnv = () => ENV;

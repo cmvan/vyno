@@ -2,7 +2,7 @@ import axios from "axios";
 import getEnv from "./env";
 
 const {
-  SPOTIFY_API: { TOP_TRACKS_API, ALBUM_TRACK_API_GETTER },
+  SPOTIFY_API: { ALBUM_API_GETTER, SEARCH_ALBUM_API_GETTER, TRACKS_API_GETTER },
 } = getEnv();
 
 const ERROR_ALERT = new Error(
@@ -41,12 +41,32 @@ const fetcher = async (url, token) => {
   }
 };
 
-/* Fetches your top tracks from the Spotify API.
- * Make sure that TOP_TRACKS_API is set correctly in env.js */
-export const getMyTopTracks = async (token) => {
+// Fetches top tracks from the Spotify API
+// export const getMyTopTracks = async (token) => {
+//   try {
+//     let res = await fetcher(TOP_TRACKS_API, token);
+//     return formatter(res.data?.items);
+//   } catch (e) {
+//     console.error(e);
+//     alert(ERROR_ALERT);
+//     return null;
+//   }
+// };
+
+// Fetches album from search query from Spotify API
+export const queryAlbum = async (name, artist, year, token) => {
   try {
-    let res = await fetcher(TOP_TRACKS_API, token);
-    return formatter(res.data?.items);
+    artist = artist.replace(/\s*\(\d+\)$/, "");
+    let query = `${name} artist:${artist} year:${year}`;
+    let res = await fetcher(SEARCH_ALBUM_API_GETTER(query), token);
+    let album = res.data.albums.items[0];
+    return {
+      albumId: album.id,
+      albumName: album.name,
+      albumArtists: album.artists?.map((artist) => ({ name: artist.name })),
+      albumDate: album.release_date,
+      albumImageUrl: album.images[0].url,
+    };
   } catch (e) {
     console.error(e);
     alert(ERROR_ALERT);
@@ -54,16 +74,15 @@ export const getMyTopTracks = async (token) => {
   }
 };
 
-/* Fetches the given album from the Spotify API.
- * Make sure that ALBUM_TRACK_API_GETTER is set correctly in env.js */
+// Fetches the given album from the Spotify API
 export const getAlbumTracks = async (albumId, token) => {
   try {
-    const res = await fetcher(ALBUM_TRACK_API_GETTER(albumId), token);
-    const transformedResponse = res.data?.tracks?.items?.map((item) => {
-      item.album = { images: res.data?.images, name: res.data?.name };
-      return item;
+    let res = await fetcher(ALBUM_API_GETTER(albumId), token);
+    const trackIds = res.data?.items?.map((item) => {
+      return item.id;
     });
-    return formatter(transformedResponse);
+    res = await fetcher(TRACKS_API_GETTER(trackIds), token);
+    return formatter(res.data.tracks);
   } catch (e) {
     console.error(e);
     alert(ERROR_ALERT);

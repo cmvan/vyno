@@ -1,10 +1,6 @@
 import getEnv from "./env";
 import { useState, useEffect } from "react";
-import {
-  ResponseType,
-  useAuthRequest,
-  makeRedirectUri,
-} from "expo-auth-session";
+import { ResponseType, useAuthRequest, makeRedirectUri } from "expo-auth-session";
 
 import * as WebBrowser from "expo-web-browser";
 
@@ -16,7 +12,6 @@ const {
   SPOTIFY_API: { DISCOVERY },
 } = getEnv();
 
-// needed so that the browser closes the modal after auth token
 WebBrowser.maybeCompleteAuthSession();
 
 const useSpotifyAuth = () => {
@@ -26,8 +21,6 @@ const useSpotifyAuth = () => {
       responseType: ResponseType.Token,
       clientId: CLIENT_ID,
       scopes: SCOPES,
-      // In order to follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
-      // this must be set to false
       usePKCE: false,
       redirectUri: REDIRECT_URI,
     },

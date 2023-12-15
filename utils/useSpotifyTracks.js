@@ -1,32 +1,29 @@
 import { useState, useEffect } from "react";
 import getEnv from "./env";
 
-import { getMyTopTracks, getAlbumTracks } from "./apiOptions";
+import { getAlbumTracks } from "./spotifyApiOptions";
 
-const { ALBUM_ID } = getEnv();
-
-const useSpotifyTracks = (token) => {
-  const [topTracks, setTopTracks] = useState([]);
+const useSpotifyTracks = (albumId, token) => {
+  const [albumTracks, setTracks] = useState([]);
 
   useEffect(() => {
     const fetchTracks = async () => {
       try {
         if (token) {
-          const res = await getMyTopTracks(token);
+          const res = await getAlbumTracks(albumId, token);
           const tracks = res.map((track) => ({
             ...track,
             songArtists: JSON.stringify(track.songArtists),
           }));
-          console.log(tracks);
-          setTopTracks(tracks);
+          setTracks(tracks);
         }
       } catch (error) {
         console.log("Error: ", error);
       }
     };
     fetchTracks();
-  }, [token]);
-  return topTracks;
+  }, [albumId, token]);
+  return albumTracks;
 };
 
 export default useSpotifyTracks;

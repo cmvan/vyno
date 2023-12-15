@@ -1,47 +1,56 @@
 import {
+  ActivityIndicator,
   Dimensions,
   StyleSheet,
   SafeAreaView,
-  FlatList,
   StatusBar,
+  ScrollView,
+  Text,
+  FlatList,
 } from "react-native";
 import { Stack } from "expo-router";
 import { useSpotifyAuth, useSpotifyTracks } from "../utils";
 import { Themes } from "../assets/Themes";
 import SpotifyAuthButton from "../components/SpotifyAuthButton";
-import Song from "../components/Song";
 import SongListHeader from "../components/SongListHeader";
+import { fetchDiscogsAlbums } from "../utils/discogsApiOptions";
+import useDiscogsCollection from "../utils/useDiscogsCollection";
+import Album from "../components/Album";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function App() {
   const { token, getSpotifyAuth } = useSpotifyAuth();
-  const tracks = useSpotifyTracks(token);
+  const { discogsAlbums, loading } = useDiscogsCollection(token);
+  console.log(discogsAlbums);
   StatusBar.setBarStyle("light-content");
 
-  const renderSong = ({ item }) => {
+  const renderAlbum = ({ item }) => {
     return (
-      <Song
-        songTitle={item.songTitle}
-        songArtists={item.songArtists}
+      <Album
+        albumId={item.albumId}
         albumName={item.albumName}
-        duration={item.duration}
-        imageUrl={item.imageUrl}
-        externalUrl={item.externalUrl}
-        previewUrl={item.previewUrl}
+        albumArtists={item.albumArtists}
+        imageUrl={item.albumImageUrl}
+        authToken={token}
       />
     );
   };
 
   let contentDisplayed = null;
 
+  if (loading) {
+    contentDisplayed = <ActivityIndicator size="large" color={Themes.colors.white} />;
+  }
   if (token) {
     contentDisplayed = (
       <FlatList
-        data={tracks}
-        renderItem={renderSong}
+        data={discogsAlbums}
+        renderItem={renderAlbum}
+        numColumns={2}
         ListHeaderComponent={<SongListHeader />}
+        contentContainerStyle={styles.albumList}
       />
     );
   } else {
@@ -83,5 +92,42 @@ const styles = StyleSheet.create({
     height: windowWidth * 0.05,
     width: windowWidth * 0.05,
     marginRight: 8,
+  },
+  albumList: {
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+  },
+  info: {
+    alignItems: "center",
+  },
+  whiteText: {
+    color: Themes.colors.white,
+  },
+  grayText: {
+    color: Themes.colors.gray,
+  },
+  albumImage: {
+    height: windowWidth * 0.6,
+    width: windowWidth * 0.6,
+    marginVertical: 20,
+  },
+  albumName: {
+    textAlign: "center",
+    marginHorizontal: "5%",
+    marginBottom: 5,
+    fontWeight: "bold",
+    fontSize: 24,
+  },
+  table: {
+    width: "100%",
+    height: 250,
+    padding: 16,
+  },
+  cell: {
+    borderWidth: 1,
+    borderColor: "#fff",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

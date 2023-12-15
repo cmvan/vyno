@@ -23,7 +23,6 @@ const windowHeight = Dimensions.get("window").height;
 export default function App() {
   const { token, getSpotifyAuth } = useSpotifyAuth();
   const { discogsAlbums, loading } = useDiscogsCollection(token);
-  console.log(discogsAlbums);
   StatusBar.setBarStyle("light-content");
 
   const renderAlbum = ({ item }) => {

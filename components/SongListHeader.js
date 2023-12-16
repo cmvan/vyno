@@ -4,16 +4,11 @@ import { Themes } from "../assets/Themes";
 
 const windowWidth = Dimensions.get("window").width;
 
-const SongListHeader = () => {
+const VynoHeader = ({ title }) => {
   return (
     <View style={styles.headerContainer}>
-      <FontAwesome5
-        name="record-vinyl"
-        size={18}
-        color="white"
-        style={styles.vynoLogo}
-      />
-      <Text style={styles.headerText}>TrackList</Text>
+      <FontAwesome5 name="record-vinyl" size={18} color="white" style={styles.vynoLogo} />
+      <Text style={styles.headerText}>{title}</Text>
     </View>
   );
 };
@@ -34,4 +29,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SongListHeader;
+export default VynoHeader;

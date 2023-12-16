@@ -4,7 +4,7 @@ import { Themes } from "../assets/Themes";
 
 const windowWidth = Dimensions.get("window").width;
 
-const Album = ({ albumId, albumName, albumArtists, imageUrl, authToken }) => {
+const Album = ({ albumId, albumName, albumArtists, imageUrl, authToken, discogsId }) => {
   const artistList = JSON.parse(albumArtists).map((artist) => artist.name);
   const artists = artistList.join(", ");
   return (
@@ -17,6 +17,7 @@ const Album = ({ albumId, albumName, albumArtists, imageUrl, authToken }) => {
           albumId: albumId,
           imageUrl: imageUrl,
           authToken: authToken,
+          discogsId: discogsId,
         },
       }}
       asChild

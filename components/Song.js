@@ -11,48 +11,35 @@ const Song = ({ songTitle, songArtists, albumName, duration, imageUrl, previewUr
   const artistList = JSON.parse(songArtists).map((artist) => artist.name);
   const artists = artistList.join(", ");
   return (
-    <Link
-      href={{
-        pathname: "/album",
-        params: {
-          albumName: albumName,
-          albumArtists: artists,
-          duration: duration,
-          imageUrl: imageUrl,
-        },
-      }}
-      asChild
-    >
-      <Pressable style={styles.songContainer}>
-        <Link
-          href={{
-            pathname: "/preview",
-            params: {
-              previewUrl: previewUrl,
-            },
-          }}
-          asChild
-        >
-          <Pressable>
-            <Ionicons
-              name="ios-play-circle"
-              size={24}
-              color={Themes.colors.spotify}
-              style={styles.playIcon}
-            />
-          </Pressable>
-        </Link>
-        <View style={styles.songTitleArtist}>
-          <Text style={[styles.text, styles.whiteText]} ellipsizeMode={"tail"} numberOfLines={1}>
-            {songTitle}
-          </Text>
-          <Text style={[styles.text, styles.grayText]} ellipsizeMode={"tail"} numberOfLines={1}>
-            {artists}
-          </Text>
-        </View>
-        <Text style={[styles.text, styles.whiteText]}>{formattedDuration}</Text>
-      </Pressable>
-    </Link>
+    <View style={styles.songContainer}>
+      <Link
+        href={{
+          pathname: "/preview",
+          params: {
+            previewUrl: previewUrl,
+          },
+        }}
+        asChild
+      >
+        <Pressable>
+          <Ionicons
+            name="ios-play-circle"
+            size={24}
+            color={Themes.colors.spotify}
+            style={styles.playIcon}
+          />
+        </Pressable>
+      </Link>
+      <View style={styles.songTitleArtist}>
+        <Text style={[styles.text, styles.whiteText]} ellipsizeMode={"tail"} numberOfLines={1}>
+          {songTitle}
+        </Text>
+        <Text style={[styles.text, styles.grayText]} ellipsizeMode={"tail"} numberOfLines={1}>
+          {artists}
+        </Text>
+      </View>
+      <Text style={[styles.text, styles.whiteText]}>{formattedDuration}</Text>
+    </View>
   );
 };
 
@@ -60,8 +47,9 @@ const styles = StyleSheet.create({
   songContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 15,
+    paddingVertical: 10,
+    minWidth: 300,
+    width: "auto",
   },
   playIcon: {
     marginRight: 10,

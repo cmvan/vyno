@@ -4,16 +4,13 @@ import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
-  ScrollView,
-  Text,
   FlatList,
 } from "react-native";
 import { Stack } from "expo-router";
-import { useSpotifyAuth, useSpotifyTracks } from "../utils";
+import { useSpotifyAuth } from "../utils";
 import { Themes } from "../assets/Themes";
-import SpotifyAuthButton from "../components/SpotifyAuthButton";
-import SongListHeader from "../components/SongListHeader";
-import { fetchDiscogsAlbums } from "../utils/discogsApiOptions";
+import VynoLogin from "../components/VynoLogin";
+import VynoHeader from "../components/SongListHeader";
 import useDiscogsCollection from "../utils/useDiscogsCollection";
 import Album from "../components/Album";
 
@@ -33,6 +30,7 @@ export default function App() {
         albumArtists={item.albumArtists}
         imageUrl={item.albumImageUrl}
         authToken={token}
+        discogsId={item.discogsId}
       />
     );
   };
@@ -48,12 +46,12 @@ export default function App() {
         data={discogsAlbums}
         renderItem={renderAlbum}
         numColumns={2}
-        ListHeaderComponent={<SongListHeader />}
+        ListHeaderComponent={<VynoHeader title={"Vyno Collection"} />}
         contentContainerStyle={styles.albumList}
       />
     );
   } else {
-    contentDisplayed = <SpotifyAuthButton onPress={getSpotifyAuth} />;
+    contentDisplayed = <VynoLogin onPress={getSpotifyAuth} />;
   }
 
   return (

@@ -41,30 +41,34 @@ const fetcher = async (url, token) => {
   }
 };
 
-// Fetches top tracks from the Spotify API
-// export const getMyTopTracks = async (token) => {
-//   try {
-//     let res = await fetcher(TOP_TRACKS_API, token);
-//     return formatter(res.data?.items);
-//   } catch (e) {
-//     console.error(e);
-//     alert(ERROR_ALERT);
-//     return null;
-//   }
-// };
-
 // Fetches album from search query from Spotify API
-export const queryAlbum = async (name, artist, year, token) => {
+export const queryAlbum = async (name, artist, year, formats, token) => {
   try {
     artist = artist.replace(/\s*\(\d+\)$/, "");
+    formatsList = formats.join(",");
+    let type = "album";
+    if (formatsList.includes("Mini-Album")) {
+      type = "single";
+    } else if (formatsList.includes("Compilation")) {
+      type = "compilation";
+    }
+
     let query = `${name} artist:${artist} year:${year}`;
     let res = await fetcher(SEARCH_ALBUM_API_GETTER(query), token);
-    let album = res.data.albums.items[0];
+    if (res.data.albums.items.length == 0) {
+      query = `${name} artist:${artist}`;
+      res = await fetcher(SEARCH_ALBUM_API_GETTER(query), token);
+    }
+
+    let album = res.data.albums.items.find((val) => val.album_type == type);
+    if (!album && res.data.albums.items) {
+      album = res.data.albums.items[0];
+    }
+
     return {
       albumId: album.id,
       albumName: album.name,
       albumArtists: album.artists?.map((artist) => ({ name: artist.name })),
-      albumDate: album.release_date,
       albumImageUrl: album.images[0].url,
     };
   } catch (e) {

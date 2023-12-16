@@ -1,12 +1,10 @@
 import axios from "axios";
 import getEnv from "./env";
-import { queryAlbum, getAlbumTracks } from "./spotifyApiOptions";
+import { queryAlbum } from "./spotifyApiOptions";
 
-const { DISCOGS_TOKEN, COLLECTION_URI } = getEnv();
-
-const ERROR_ALERT = new Error(
-  "Oh no! Something went wrong; probably a malformed request or a network error.\nCheck console for more details."
-);
+const {
+  DISCOGS_API: { DISCOGS_TOKEN, COLLECTION_URI, RELEASE_STATS_API_GETTER },
+} = getEnv();
 
 const albumFormatter = (data) =>
   data.map((val) => {
@@ -15,6 +13,8 @@ const albumFormatter = (data) =>
       name: val.basic_information.title,
       artists: artists,
       year: val.basic_information.year,
+      formats: val.basic_information.formats[0].descriptions,
+      discogsId: val.basic_information.id,
     };
   });
 
@@ -39,10 +39,16 @@ export const fetchDiscogsAlbums = async (spotifyToken) => {
     let albums = await fetchCollection();
     let albumsObj = [];
     for await (const album of albums) {
-      let res = await queryAlbum(album.name, album.artists[0].name, album.year, spotifyToken);
+      let res = await queryAlbum(
+        album.name,
+        album.artists[0].name,
+        album.year,
+        album.formats,
+        spotifyToken
+      );
+      res.discogsId = album.discogsId;
       albumsObj.push(res);
     }
-    // console.log(albumsObj);
     return albumsObj;
   } catch (e) {
     console.error(e);
@@ -54,11 +60,34 @@ export const fetchDiscogsAlbums = async (spotifyToken) => {
 export const fetchCollection = async () => {
   try {
     let res = await fetcher(COLLECTION_URI);
-    // console.log(res.data.releases);
     return albumFormatter(res.data.releases);
   } catch (e) {
     console.error(e);
     alert(ERROR_ALERT);
+    return null;
+  }
+};
+
+export const fetchReleaseStats = async (releaseId) => {
+  try {
+    let res = await fetcher(RELEASE_STATS_API_GETTER(releaseId));
+    const formatList = [res.data.formats[0].name, ...res.data.formats[0].descriptions];
+    if (res.data.formats[0].text) {
+      formatList.push(res.data.formats[0].text);
+    }
+    const labels = res.data?.labels?.map((val) => val.name);
+    stats = {
+      date: res.data.released,
+      country: res.data.country,
+      formats: formatList,
+      genres: res.data.genres,
+      labels: labels,
+      styles: res.data.styles ? res.data.styles : ["N/A"],
+    };
+    return stats;
+  } catch (e) {
+    console.error(e);
+    alert("Failed to get Discogs release stats!");
     return null;
   }
 };

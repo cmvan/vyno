@@ -40,14 +40,16 @@ const ENV = {
       authorizationEndpoint: "https://accounts.spotify.com/authorize",
       tokenEndpoint: "https://accounts.spotify.com/api/token",
     },
-    TOP_TRACKS_API: "https://api.spotify.com/v1/me/top/tracks?limit=20&offset=0",
     SEARCH_ALBUM_API_GETTER: (query) =>
       "https://api.spotify.com/v1/search?q=" + encodeURIComponent(query) + "&type=album",
     ALBUM_API_GETTER: (albumId) => "https://api.spotify.com/v1/albums/" + albumId + "/tracks",
     TRACKS_API_GETTER: (trackIds) => "https://api.spotify.com/v1/tracks?ids=" + trackIds.join(","),
   },
-  DISCOGS_TOKEN: DISCOGS_TOKEN,
-  COLLECTION_URI: COLLECTION_URI,
+  DISCOGS_API: {
+    DISCOGS_TOKEN: DISCOGS_TOKEN,
+    COLLECTION_URI: COLLECTION_URI,
+    RELEASE_STATS_API_GETTER: (releaseId) => "https://api.discogs.com/releases/" + releaseId,
+  },
 };
 
 const getEnv = () => ENV;

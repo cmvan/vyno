@@ -38,7 +38,9 @@ export default function App() {
   let contentDisplayed = null;
 
   if (loading) {
-    contentDisplayed = <ActivityIndicator size="large" color={Themes.colors.white} />;
+    contentDisplayed = (
+      <ActivityIndicator animating={true} size="large" color={Themes.colors.white} />
+    );
   }
   if (token) {
     contentDisplayed = (

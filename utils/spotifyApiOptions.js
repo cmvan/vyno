@@ -42,28 +42,35 @@ const fetcher = async (url, token) => {
 };
 
 // Fetches album from search query from Spotify API
-export const queryAlbum = async (name, artist, year, formats, token) => {
+export const queryAlbum = async (name, artist, year, token) => {
   try {
     artist = artist.replace(/\s*\(\d+\)$/, "");
-    formatsList = formats.join(",");
-    let type = "album";
-    if (formatsList.includes("Mini-Album")) {
-      type = "single";
-    } else if (formatsList.includes("Compilation")) {
-      type = "compilation";
-    }
+    // formatsList = formats.join(",");
+    // let type = "album";
+    // if (formatsList.includes("Mini-Album")) {
+    //   type = "single";
+    // } else if (formatsList.includes("Compilation")) {
+    //   type = "compilation";
+    // }
 
-    let query = `${name} artist:${artist} year:${year}`;
+    let query = `${name} ${artist} ${year}`;
     let res = await fetcher(SEARCH_ALBUM_API_GETTER(query), token);
-    if (res.data.albums.items.length == 0) {
-      query = `${name} artist:${artist}`;
-      res = await fetcher(SEARCH_ALBUM_API_GETTER(query), token);
-    }
+    // if (res.data.albums.items.length == 0) {
+    //   console.log("Second time: ", name, artist, year);
+    //   query = `${name} ${artist}`;
+    //   res = await fetcher(SEARCH_ALBUM_API_GETTER(query), token);
+    // }
 
-    let album = res.data.albums.items.find((val) => val.album_type == type);
-    if (!album && res.data.albums.items) {
+    let album = res.data.albums.items[0];
+    // let artist_check = res.data.albums.items[0].artists[0].name;
+    let year_check = res.data.albums.items[0].release_date.slice(0, 4);
+    if (Number(year) < Number(year_check)) {
+      query = `${name} ${artist} year:${year}`;
+      res = await fetcher(SEARCH_ALBUM_API_GETTER(query), token);
       album = res.data.albums.items[0];
     }
+    // console.log("Artist Check: ", artist, artist_check);
+    // console.log("Date Check: ", year, year_check);
 
     return {
       albumId: album.id,
@@ -73,6 +80,7 @@ export const queryAlbum = async (name, artist, year, formats, token) => {
     };
   } catch (e) {
     console.error(e);
+    console.log(name, artist, year);
     alert(ERROR_ALERT);
     return null;
   }

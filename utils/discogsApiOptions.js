@@ -8,7 +8,10 @@ const {
 
 const albumFormatter = (data) =>
   data.map((val) => {
-    const artists = val.basic_information.artists?.map((artist) => ({ name: artist.name }));
+    const artists = val.basic_information.artists?.map((artist) => ({
+      name: artist.name,
+      id: artist.id,
+    }));
     return {
       name: val.basic_information.title,
       artists: artists,
@@ -37,15 +40,10 @@ const fetcher = async (url) => {
 export const fetchDiscogsAlbums = async (spotifyToken) => {
   try {
     let albums = await fetchCollection();
+    console.log(albums[0].artists[0].id);
     let albumsObj = [];
     for await (const album of albums) {
-      let res = await queryAlbum(
-        album.name,
-        album.artists[0].name,
-        album.year,
-        album.formats,
-        spotifyToken
-      );
+      let res = await queryAlbum(album.name, album.artists[0].name, album.year, spotifyToken);
       res.discogsId = album.discogsId;
       albumsObj.push(res);
     }

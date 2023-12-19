@@ -53,7 +53,7 @@ export const queryAlbum = async (name, artist, year, token) => {
     //   type = "compilation";
     // }
 
-    let query = `${name} ${artist} ${year}`;
+    let query = `${name} ${artist}`;
     let res = await fetcher(SEARCH_ALBUM_API_GETTER(query), token);
     // if (res.data.albums.items.length == 0) {
     //   console.log("Second time: ", name, artist, year);

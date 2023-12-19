@@ -6,10 +6,11 @@ import { millisToMinutesAndSeconds } from "../utils";
 
 const windowWidth = Dimensions.get("window").width;
 
-const Song = ({ songTitle, songArtists, albumName, duration, imageUrl, previewUrl }) => {
+const Song = ({ songTitle, songArtists, duration, previewUrl }) => {
   const formattedDuration = millisToMinutesAndSeconds(duration);
   const artistList = JSON.parse(songArtists).map((artist) => artist.name);
   const artists = artistList.join(", ");
+
   return (
     <View style={styles.songContainer}>
       <Link

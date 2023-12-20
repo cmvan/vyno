@@ -6,6 +6,9 @@ const {
   DISCOGS_API: { DISCOGS_TOKEN, COLLECTION_URI, RELEASE_STATS_API_GETTER },
 } = getEnv();
 
+const NO_URL = "NO_IMAGE_URL";
+const NO_SPOTIFY_ID = "NO_SPOTIFY_ID";
+
 const albumFormatter = (data) =>
   data.map((val) => {
     const artists = val.basic_information.artists?.map((artist) => ({
@@ -16,7 +19,7 @@ const albumFormatter = (data) =>
       name: val.basic_information.title,
       artists: artists,
       year: val.basic_information.year,
-      formats: val.basic_information.formats[0].descriptions,
+      // formats: val.basic_information.formats[0].descriptions,
       discogsId: val.basic_information.id,
     };
   });
@@ -40,12 +43,16 @@ const fetcher = async (url) => {
 export const fetchDiscogsAlbums = async (spotifyToken) => {
   try {
     let albums = await fetchCollection();
-    console.log(albums[0].artists[0].id);
     let albumsObj = [];
     for await (const album of albums) {
-      let res = await queryAlbum(album.name, album.artists[0].name, album.year, spotifyToken);
-      res.discogsId = album.discogsId;
-      albumsObj.push(res);
+      let spotifyAlbumInfo = await queryAlbum(
+        album.name,
+        album.artists[0].name,
+        album.year,
+        spotifyToken
+      );
+      let updatedAlbum = { ...album, ...spotifyAlbumInfo };
+      albumsObj.push(updatedAlbum);
     }
     return albumsObj;
   } catch (e) {
@@ -68,7 +75,7 @@ export const fetchCollection = async () => {
 
 export const fetchReleaseStats = async (releaseId) => {
   try {
-    let res = await fetcher(RELEASE_STATS_API_GETTER(releaseId));
+    const res = await fetcher(RELEASE_STATS_API_GETTER(releaseId));
     const formatList = [res.data.formats[0].name, ...res.data.formats[0].descriptions];
     if (res.data.formats[0].text) {
       formatList.push(res.data.formats[0].text);

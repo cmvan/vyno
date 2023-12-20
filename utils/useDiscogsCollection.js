@@ -13,8 +13,9 @@ const useDiscogsCollection = (token) => {
           const res = await fetchDiscogsAlbums(token);
           const albums = res.map((album) => ({
             ...album,
-            albumArtists: JSON.stringify(album.albumArtists),
+            artists: JSON.stringify(album.artists),
           }));
+          console.log(albums);
           setDiscogsAlbums(albums);
           setLoading(false);
         }

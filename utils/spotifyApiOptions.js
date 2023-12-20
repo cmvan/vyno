@@ -9,6 +9,9 @@ const ERROR_ALERT = new Error(
   "Oh no! Something went wrong; probably a malformed request or a network error.\nCheck console for more details."
 );
 
+const NO_URL = "NO_IMAGE_URL";
+const NO_SPOTIFY_ID = "NO_SPOTIFY_ID";
+
 /* Pulls out the relevant data from the API response and puts it in a nicely structured object. */
 const formatter = (data) =>
   data.map((val) => {
@@ -44,24 +47,12 @@ const fetcher = async (url, token) => {
 // Fetches album from search query from Spotify API
 export const queryAlbum = async (name, artist, year, token) => {
   try {
+    // Remove numbering Discogs uses to distinguish artists of same name
     artist = artist.replace(/\s*\(\d+\)$/, "");
-    // formatsList = formats.join(",");
-    // let type = "album";
-    // if (formatsList.includes("Mini-Album")) {
-    //   type = "single";
-    // } else if (formatsList.includes("Compilation")) {
-    //   type = "compilation";
-    // }
-
     let query = `${name} ${artist}`;
     let res = await fetcher(SEARCH_ALBUM_API_GETTER(query), token);
-    // if (res.data.albums.items.length == 0) {
-    //   console.log("Second time: ", name, artist, year);
-    //   query = `${name} ${artist}`;
-    //   res = await fetcher(SEARCH_ALBUM_API_GETTER(query), token);
-    // }
-
     let album = res.data.albums.items[0];
+
     // let artist_check = res.data.albums.items[0].artists[0].name;
     let year_check = res.data.albums.items[0].release_date.slice(0, 4);
     if (Number(year) < Number(year_check)) {
@@ -73,10 +64,8 @@ export const queryAlbum = async (name, artist, year, token) => {
     // console.log("Date Check: ", year, year_check);
 
     return {
-      albumId: album.id,
-      albumName: album.name,
-      albumArtists: album.artists?.map((artist) => ({ name: artist.name })),
-      albumImageUrl: album.images[0].url,
+      spotifyId: album.id ?? NO_SPOTIFY_ID,
+      imageUrl: album.images[0].url ?? NO_URL,
     };
   } catch (e) {
     console.error(e);

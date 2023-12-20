@@ -25,10 +25,10 @@ export default function App() {
   const renderAlbum = ({ item }) => {
     return (
       <Album
-        albumId={item.albumId}
-        albumName={item.albumName}
-        albumArtists={item.albumArtists}
-        imageUrl={item.albumImageUrl}
+        spotifyId={item.spotifyId}
+        albumName={item.name}
+        albumArtists={item.artists}
+        imageUrl={item.imageUrl}
         authToken={token}
         discogsId={item.discogsId}
       />

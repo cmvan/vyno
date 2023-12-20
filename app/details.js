@@ -8,7 +8,7 @@ import AlbumStats from "../components/AlbumStats";
 
 export default function Page() {
   const params = useLocalSearchParams();
-  const tracks = useSpotifyTracks(params.albumId, params.authToken);
+  const tracks = useSpotifyTracks(params.spotifyId, params.authToken);
   const releaseStats = useDiscogsStats(params.discogsId);
 
   const commaListMaker = (list) => {

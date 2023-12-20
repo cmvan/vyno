@@ -47,8 +47,6 @@ const fetcher = async (url, token) => {
 // Fetches album from search query from Spotify API
 export const queryAlbum = async (name, artist, year, token) => {
   try {
-    // Remove numbering Discogs uses to distinguish artists of same name
-    artist = artist.replace(/\s*\(\d+\)$/, "");
     let query = `${name} ${artist}`;
     let res = await fetcher(SEARCH_ALBUM_API_GETTER(query), token);
     let album = res.data.albums.items[0];

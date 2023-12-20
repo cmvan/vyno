@@ -11,15 +11,15 @@ const NO_SPOTIFY_ID = "NO_SPOTIFY_ID";
 
 const albumFormatter = (data) =>
   data.map((val) => {
+    // remove numbering Discogs uses to distinguish artists of same name
     const artists = val.basic_information.artists?.map((artist) => ({
-      name: artist.name,
+      name: artist.name.replace(/\s*\(\d+\)$/, ""),
       id: artist.id,
     }));
     return {
       name: val.basic_information.title,
       artists: artists,
       year: val.basic_information.year,
-      // formats: val.basic_information.formats[0].descriptions,
       discogsId: val.basic_information.id,
     };
   });
@@ -57,7 +57,7 @@ export const fetchDiscogsAlbums = async (spotifyToken) => {
     return albumsObj;
   } catch (e) {
     console.error(e);
-    alert("Albums could not be fetched from Discogs!");
+    alert("Albums could not be queried from Spotify!");
     return null;
   }
 };
@@ -68,7 +68,7 @@ export const fetchCollection = async () => {
     return albumFormatter(res.data.releases);
   } catch (e) {
     console.error(e);
-    alert(ERROR_ALERT);
+    alert("Albums could not be fetched from Discogs!");
     return null;
   }
 };
